@@ -22,7 +22,22 @@ let lockBoard = false;
 
 */
 function initGame() {
-    // Write your code here
+    // Clear the game board
+    const gameBoard = document.getElementById('game-board');
+    gameBoard.innerHTML = '';
+
+    // Duplicate and shuffle the symbols array
+    cards = [...symbols, ...symbols];
+    shuffleArray(cards);
+
+    // Create each card and add it to the game board
+    cards.forEach(symbol => {
+        const cardElement = createCard(symbol);
+        gameBoard.appendChild(cardElement);
+    });
+
+    // Reset the board and event listeners
+    resetBoard();
 
     document.getElementById('restart-btn').addEventListener('click', initGame);
 }
@@ -33,7 +48,14 @@ function initGame() {
     Also make sure to add the event listener with the 'flipCard' function
 */
 function createCard(symbol) {
-    // Write your code here
+    // Create a div element with the class 'card'
+    const card = document.createElement('div');
+    card.classList.add('card');
+    // Store the symbol as a data attribute
+    card.dataset.symbol = symbol;
+    // Add an event listener to flip the card on click
+    card.addEventListener('click', () => flipCard(card));
+    return card;
 }
 
 /*
@@ -47,7 +69,19 @@ function createCard(symbol) {
 function flipCard(card) {
     // If the board is supposed to be locked or you picked the same card you already picked
     if (lockBoard || card === firstCard) return;
-    // Write your code here
+    
+    // Add 'flipped' class and display the symbol
+    card.classList.add('flipped');
+    card.textContent = card.dataset.symbol;
+
+    if (!firstCard) {
+        // If this is the first card
+        firstCard = card;
+    } else {
+        // If this is the second card
+        secondCard = card;
+        checkForMatch();
+    }
 }
 
 /* 
@@ -56,7 +90,8 @@ function flipCard(card) {
     Otherwise, you should unflip the card and continue playing normally.
 */
 function checkForMatch() {
-    // Write your code here
+    const isMatch = firstCard.dataset.symbol === secondCard.dataset.symbol;
+    isMatch ? disableCards() : unflipCards();
 }
 
 /* 
@@ -65,7 +100,11 @@ function checkForMatch() {
     to reset the firstCard, secondCard, and lockBoard variables. (That's been written for you already)
 */
 function disableCards() {
-    // Write your code here
+    // Add 'matched' class to both cards
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
+    // Reset the board
+    resetBoard();
 }
  
 /* ---------------------  Everything under has already been done for you -------------------------- */
